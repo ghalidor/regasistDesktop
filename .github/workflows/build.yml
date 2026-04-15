@@ -1,0 +1,109 @@
+name: Build Regasist Desktop
+
+on:
+  push:
+    tags:
+      - 'v*'        # Se ejecuta cuando haces un tag tipo v1.0.0
+  workflow_dispatch:  # Permite ejecutarlo manualmente desde GitHub
+
+jobs:
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Compilar para Windows
+        run: npm run build:win
+
+      - name: Subir instalador Windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: instalador-windows
+          path: dist/*.exe
+
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Compilar para Mac
+        run: npm run build:mac
+
+      - name: Subir instalador Mac
+        uses: actions/upload-artifact@v4
+        with:
+          name: instalador-mac
+          path: dist/*.dmg
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Compilar para Linux
+        run: npm run build:linux
+
+      - name: Subir instalador Linux
+        uses: actions/upload-artifact@v4
+        with:
+          name: instalador-linux
+          path: dist/*.AppImage
+
+  # Cuando los 3 builds terminan, crea un Release en GitHub con los 3 instaladores
+  release:
+    needs: [build-windows, build-mac, build-linux]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Descargar instalador Windows
+        uses: actions/download-artifact@v4
+        with:
+          name: instalador-windows
+          path: instaladores
+
+      - name: Descargar instalador Mac
+        uses: actions/download-artifact@v4
+        with:
+          name: instalador-mac
+          path: instaladores
+
+      - name: Descargar instalador Linux
+        uses: actions/download-artifact@v4
+        with:
+          name: instalador-linux
+          path: instaladores
+
+      - name: Crear Release con los 3 instaladores
+        uses: softprops/action-gh-release@v2
+        with:
+          files: instaladores/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
