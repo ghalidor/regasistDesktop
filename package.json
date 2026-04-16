@@ -27,6 +27,12 @@
     "linux": {
       "target": "AppImage",
       "icon": "assets/icon.png"
+    },
+	"nsis": {
+      "installerHeaderIcon": "assets/icon.ico",
+      "uninstallDisplayName": "Regasist Remoto",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
     }
   },
   "devDependencies": {
