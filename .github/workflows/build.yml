@@ -9,30 +9,34 @@ on:
 jobs:
 
   build-windows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout codigo
-        uses: actions/checkout@v4
+  runs-on: windows-latest
+  env:
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  steps:
+    - name: Checkout codigo
+      uses: actions/checkout@v4
 
-      - name: Instalar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
+    - name: Instalar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
 
-      - name: Instalar dependencias
-        run: npm install
+    - name: Instalar dependencias
+      run: npm install
 
-      - name: Compilar para Windows
-        run: npm run build:win
+    - name: Compilar para Windows
+      run: npm run build:win
 
-      - name: Subir instalador Windows
-        uses: actions/upload-artifact@v4
-        with:
-          name: instalador-windows
-          path: dist/*.exe
-
+    - name: Subir instalador Windows
+      uses: actions/upload-artifact@v4
+      with:
+        name: instalador-windows
+        path: dist/*.exe
+        
   build-mac:
     runs-on: macos-latest
+    env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout codigo
         uses: actions/checkout@v4
@@ -56,6 +60,8 @@ jobs:
 
   build-linux:
     runs-on: ubuntu-latest
+    env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout codigo
         uses: actions/checkout@v4
