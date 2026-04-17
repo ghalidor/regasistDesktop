@@ -13,6 +13,7 @@
   "build": {
     "appId": "com.regasist.desktop",
     "productName": "Regasist Remoto",
+	"icon": "assets/icon.ico",
     "directories": {
       "output": "dist"
     },
