@@ -6,7 +6,7 @@ const path = require('path');
 // ============================================================
 // CONFIGURACION
 // ============================================================
-const APP_URL = 'http://tuservidor/marcar-remoto';
+const APP_URL = 'http://localhost:4200/#/remoto';
 const WS_URL  = 'ws://localhost:5556/';
 const CHECK_INTERVAL = 5 * 60 * 1000; // verificar cambios cada 5 minutos
 // ============================================================
@@ -279,5 +279,13 @@ app.whenReady().then(async () => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
+  }
+});
+
+// Permitir cierre limpio de la app para reinstalacion
+app.on('before-quit', () => {
+  if (mainWindow) {
+    mainWindow.removeAllListeners('close');
+    mainWindow.close();
   }
 });
