@@ -2,45 +2,38 @@
   "name": "regasist-desktop",
   "version": "1.0.0",
   "description": "Regasist Punto de Marcacion Remoto",
+  "author": "Regasist",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-   "build:win": "electron-builder --win --publish never",
-    "build:mac": "electron-builder --mac --publish never",
-    "build:linux": "electron-builder --linux --publish never",
-    "build:all": "electron-builder --win --mac --linux --publish never"
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
   },
   "build": {
     "appId": "com.regasist.desktop",
     "productName": "Regasist Remoto",
-	"icon": "assets/icon.ico",
+    "publish": [
+      {
+        "provider": "github",
+        "releaseType": "draft"
+      }
+    ],
     "directories": {
       "output": "dist"
     },
     "win": {
-      "target": "nsis",
-      "icon": "assets/icon.ico"
+      "target": "nsis"
     },
     "mac": {
-      "target": "dmg",
-      "icon": "assets/icon.icns"
+      "target": "dmg"
     },
     "linux": {
-      "target": "AppImage",
-      "icon": "assets/icon.png"
-    },
-	"nsis": {
-      "installerHeaderIcon": "assets/icon.ico",
-      "uninstallDisplayName": "Regasist Remoto",
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "target": "AppImage"
     }
   },
   "devDependencies": {
     "electron": "^29.0.0",
     "electron-builder": "^24.0.0"
-  },
-  "dependencies": {
-    "ws": "^8.20.0"
   }
 }
