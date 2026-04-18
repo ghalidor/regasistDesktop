@@ -34,7 +34,6 @@ function crearVentana(hash) {
   // Cargar pantalla de carga primero
   mainWindow.loadURL('about:blank').then(() => {
     mostrarPantallaCarga();
-    // Luego cargar la app real
     mainWindow.loadURL(APP_URL).catch(() => {
       mostrarPantallaError('No se pudo conectar al servidor.\nVerifique su conexión de red.');
     });
@@ -58,16 +57,15 @@ function crearVentana(hash) {
     mostrarPantallaError(`No se pudo cargar la aplicación.\n${errorDescription}`);
   });
 
-  // Prevenir navegacion a URLs diferentes a la app
+  // Bloquear cualquier URL que no sea la app
   mainWindow.webContents.on('will-navigate', (event, url) => {
-    const baseUrl = APP_URL.split('/marcar-remoto')[0];
-    if (!url.startsWith(baseUrl) && url !== 'about:blank') {
+    if (!url.startsWith('http://localhost:4200') && url !== 'about:blank') {
       event.preventDefault();
       console.log('Navegacion bloqueada:', url);
     }
   });
 
-  // Prevenir que abra ventanas nuevas
+  // Bloquear ventanas nuevas
   mainWindow.webContents.setWindowOpenHandler(() => {
     return { action: 'deny' };
   });
@@ -164,10 +162,7 @@ function mostrarPantallaError(mensaje) {
 
 function obtenerIndexHtml() {
   return new Promise((resolve) => {
-    const baseUrl = APP_URL.split('/marcar-remoto')[0];
-    const checkUrl = baseUrl + '/index.html';
-
-    http.get(checkUrl, (res) => {
+    http.get('http://localhost:4200/index.html', (res) => {
       let body = '';
       res.on('data', chunk => body += chunk);
       res.on('end', () => resolve(body));
@@ -197,7 +192,6 @@ async function verificarCambios() {
 }
 
 function iniciarVerificacionCambios() {
-  // Guardar version inicial
   obtenerIndexHtml().then(html => {
     currentIndexHtml = html;
   });
@@ -279,13 +273,5 @@ app.whenReady().then(async () => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
-  }
-});
-
-// Permitir cierre limpio de la app para reinstalacion
-app.on('before-quit', () => {
-  if (mainWindow) {
-    mainWindow.removeAllListeners('close');
-    mainWindow.close();
   }
 });

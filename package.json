@@ -30,13 +30,22 @@
     },
     "linux": {
       "target": "AppImage"
+    },
+    "nsis": {
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "uninstallDisplayName": "Regasist Remoto",
+      "installerHeaderIcon": "assets/icon.ico",
+      "closeApplications": true,
+      "killAppByExe": true
     }
+  },
+  "dependencies": {
+    "ws": "^8.20.0"
   },
   "devDependencies": {
     "electron": "^29.0.0",
     "electron-builder": "^24.0.0"
-  },
-  "dependencies": {
-    "ws": "^8.20.0"
   }
 }
