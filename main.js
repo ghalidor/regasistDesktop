@@ -22,7 +22,7 @@ function crearVentana(hash) {
     width: 1280,
     height: 800,
 	minWidth: 768,
-    minHeight: 1024,
+    minHeight: 600,
     autoHideMenuBar: true,
     title: 'Regasist Remoto',
     icon: path.join(__dirname, 'assets', 'icon.png'),
