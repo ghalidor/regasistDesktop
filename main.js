@@ -21,6 +21,8 @@ function crearVentana(hash) {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
+	minWidth: 768,
+    minHeight: 1024,
     autoHideMenuBar: true,
     title: 'Regasist Remoto',
     icon: path.join(__dirname, 'assets', 'icon.png'),
