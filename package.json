@@ -16,6 +16,12 @@
     "directories": {
       "output": "dist"
     },
+	"extraResources": [
+      {
+        "from": "config.json",
+        "to": "../config.json"
+      }
+    ],
     "win": {
       "target": "nsis",
       "icon": "assets/icon.ico"
