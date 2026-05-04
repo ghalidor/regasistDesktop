@@ -2,13 +2,38 @@ const { app, BrowserWindow, dialog } = require('electron');
 const WebSocket = require('ws');
 const http = require('http');
 const path = require('path');
+const fs = require('fs');
 
 // ============================================================
-// CONFIGURACION
+// CONFIGURACION — se lee desde config.json junto al ejecutable
+// Si no existe config.json usa estos valores por defecto
 // ============================================================
-const APP_URL = 'http://localhost:4200/#/remoto';
-const WS_URL  = 'ws://localhost:5556/';
-const CHECK_INTERVAL = 5 * 60 * 1000; // verificar cambios cada 5 minutos
+const DEFAULT_CONFIG = {
+  APP_URL: 'http://localhost:4200/#/remoto',
+  WS_URL:  'ws://localhost:5556/'
+};
+
+function cargarConfig() {
+  try {
+    // Buscar config.json junto al ejecutable instalado
+    const configPath = path.join(path.dirname(app.getPath('exe')), 'config.json');
+    if (fs.existsSync(configPath)) {
+      const raw = fs.readFileSync(configPath, 'utf8');
+      const config = JSON.parse(raw);
+      console.log('Config cargada desde:', configPath);
+      return { ...DEFAULT_CONFIG, ...config };
+    }
+  } catch (err) {
+    console.error('Error leyendo config.json, usando valores por defecto:', err.message);
+  }
+  console.log('Usando configuracion por defecto');
+  return DEFAULT_CONFIG;
+}
+
+const config = cargarConfig();
+const APP_URL = config.APP_URL;
+const WS_URL  = config.WS_URL;
+const CHECK_INTERVAL = 5 * 60 * 1000;
 // ============================================================
 
 let mainWindow;
@@ -21,7 +46,7 @@ function crearVentana(hash) {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
-	minWidth: 768,
+    minWidth: 768,
     minHeight: 600,
     autoHideMenuBar: true,
     title: 'Regasist Remoto',
@@ -64,8 +89,9 @@ function crearVentana(hash) {
 }
 
 function obtenerIndexHtml() {
+  const baseUrl = APP_URL.split('/#/')[0];
   return new Promise((resolve) => {
-    http.get('http://localhost:4200/index.html', (res) => {
+    http.get(baseUrl + '/index.html', (res) => {
       let body = '';
       res.on('data', chunk => body += chunk);
       res.on('end', () => resolve(body));
@@ -126,7 +152,7 @@ function iniciarVerificacionCambios() {
 
 function obtenerHash() {
   return new Promise((resolve) => {
-    console.log('Conectando al servicio WebSocket...');
+    console.log('Conectando al servicio WebSocket:', WS_URL);
     const ws = new WebSocket(WS_URL);
 
     const timeout = setTimeout(() => {
