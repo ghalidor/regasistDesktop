@@ -1,4 +1,4 @@
 {
-  "APP_URL": "http://localhost:4200/#/remoto",
+  "APP_URL": "http://40.122.134.6:3001/#/remoto",
   "WS_URL": "ws://localhost:5556/"
 }
