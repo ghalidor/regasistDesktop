@@ -4,6 +4,20 @@ const http = require('http');
 const path = require('path');
 const fs = require('fs');
 
+// Instancia unica — si ya hay una corriendo, enfocarla y cerrar esta
+const gotTheLock = app.requestSingleInstanceLock();
+ 
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
+}
+
 // ============================================================
 // CONFIGURACION — se lee desde config.json junto al ejecutable
 // Si no existe config.json usa estos valores por defecto
